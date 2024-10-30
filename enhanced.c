@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
   // Array to store the count of each possible last octet
   int octet_counts[OCTET_COUNTS] = {0};
   uint8_t last_octet;
+  uint32_t ip;
 
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <pcap file>\n", argv[0]);
@@ -32,9 +33,13 @@ int main(int argc, char *argv[]) {
 
   while ((packet = pcap_next(handle, &header)) != NULL) {
     ip_header = (struct iphdr *)(packet + sizeof(struct ethhdr));
+    // Use ntohl to convert to host byte order, eg. big endian -> little endian
+    // for intel machine
+    ip = ntohl(ip_header->daddr);
+
     // For each packet, add 1 to the count of the last octet of the destination
     // IP address
-    last_octet = LAST_OCTET(ip_header->daddr);
+    last_octet = LAST_OCTET(ip);
     octet_counts[last_octet]++;
   }
 
