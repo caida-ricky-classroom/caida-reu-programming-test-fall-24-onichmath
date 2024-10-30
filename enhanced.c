@@ -4,6 +4,9 @@
 #include <pcap.h>
 #include <stdio.h>
 
+#define LAST_OCTET(ip) ((ip) & 0xFF)
+#define OCTET_COUNTS 256
+
 int main(int argc, char *argv[]) {
   char errbuf[PCAP_ERRBUF_SIZE];
   pcap_t *handle;
@@ -26,8 +29,6 @@ int main(int argc, char *argv[]) {
   while ((packet = pcap_next(handle, &header)) != NULL) {
     ip_header = (struct iphdr *)(packet + sizeof(struct ethhdr));
 
-    // Change ip_header->daddr to be &ip_header->daddr typecast it as a struct
-    // in_addr.
     printf("Packet %d: IP destination address: %s\n", ++packet_count,
            inet_ntoa(*((struct in_addr *)&ip_header->daddr)));
   }
