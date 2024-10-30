@@ -14,7 +14,6 @@ int main(int argc, char *argv[]) {
   const unsigned char *packet;
   struct pcap_pkthdr header;
   struct iphdr *ip_header;
-  int packet_count = 0;
   int octet_counts[OCTET_COUNTS] = {0};
   uint8_t last_octet;
 
@@ -31,6 +30,8 @@ int main(int argc, char *argv[]) {
 
   while ((packet = pcap_next(handle, &header)) != NULL) {
     ip_header = (struct iphdr *)(packet + sizeof(struct ethhdr));
+    last_octet = LAST_OCTET(ip_header->daddr);
+    octet_counts[last_octet]++;
   }
 
   pcap_close(handle);
