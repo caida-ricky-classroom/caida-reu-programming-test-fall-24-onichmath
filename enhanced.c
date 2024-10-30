@@ -2,6 +2,7 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <pcap.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #define LAST_OCTET(ip) ((ip) & 0xFF)
@@ -14,6 +15,8 @@ int main(int argc, char *argv[]) {
   struct pcap_pkthdr header;
   struct iphdr *ip_header;
   int packet_count = 0;
+  int octet_counts[OCTET_COUNTS] = {0};
+  uint8_t last_octet;
 
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <pcap file>\n", argv[0]);
@@ -28,9 +31,6 @@ int main(int argc, char *argv[]) {
 
   while ((packet = pcap_next(handle, &header)) != NULL) {
     ip_header = (struct iphdr *)(packet + sizeof(struct ethhdr));
-
-    printf("Packet %d: IP destination address: %s\n", ++packet_count,
-           inet_ntoa(*((struct in_addr *)&ip_header->daddr)));
   }
 
   pcap_close(handle);
