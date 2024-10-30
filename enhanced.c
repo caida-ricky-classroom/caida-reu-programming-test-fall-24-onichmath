@@ -38,6 +38,11 @@ int main(int argc, char *argv[]) {
     octet_counts[last_octet]++;
   }
 
+  // Print the count of each possible last octet
+  for (int i = 0; i < OCTET_COUNTS; i++) {
+    printf("Last octet %d: %d\n", i, octet_counts[i]);
+  }
+
   pcap_close(handle);
   return 0;
 }
