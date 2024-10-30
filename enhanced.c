@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+// Macro to extract the last octet of an IP address
 #define LAST_OCTET(ip) ((ip) & 0xFF)
 #define OCTET_COUNTS 256
 
@@ -14,6 +15,7 @@ int main(int argc, char *argv[]) {
   const unsigned char *packet;
   struct pcap_pkthdr header;
   struct iphdr *ip_header;
+  // Array to store the count of each possible last octet
   int octet_counts[OCTET_COUNTS] = {0};
   uint8_t last_octet;
 
@@ -30,6 +32,8 @@ int main(int argc, char *argv[]) {
 
   while ((packet = pcap_next(handle, &header)) != NULL) {
     ip_header = (struct iphdr *)(packet + sizeof(struct ethhdr));
+    // For each packet, add 1 to the count of the last octet of the destination
+    // IP address
     last_octet = LAST_OCTET(ip_header->daddr);
     octet_counts[last_octet]++;
   }
